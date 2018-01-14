@@ -1,4 +1,4 @@
-package uk.co.akm.test.motion.boat.path.helper;
+package uk.co.akm.test.motion.boat.path.helper.path;
 
 import uk.co.akm.test.motion.boat.phys.State;
 

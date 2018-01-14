@@ -1,12 +1,13 @@
-package uk.co.akm.test.motion.boat.path.helper.impl;
+package uk.co.akm.test.motion.boat.path.helper.path.impl;
 
-import uk.co.akm.test.motion.boat.path.helper.BoatPath;
+import uk.co.akm.test.motion.boat.path.helper.dim.DimSpecs;
+import uk.co.akm.test.motion.boat.path.helper.path.BoatPath;
 import uk.co.akm.test.motion.boat.phys.State;
 
 /**
  * Created by Thanos Mavroidis on 14/01/2018.
  */
-public final class BoatPathImpl implements BoatPath {
+public final class BoatPathImpl implements BoatPath, DimSpecs {
     private double xMin;
     private double xMax;
     private double yMin;
@@ -16,14 +17,14 @@ public final class BoatPathImpl implements BoatPath {
     private final double[][] points;
 
     public BoatPathImpl(int nPoints) {
-        points = new double[nPoints][2];
+        points = new double[nPoints][N_DIM];
     }
 
     @Override
     public void addPoint(State point) {
-        points[i][0] = point.x();
-        points[i][1] = point.y();
-        setLimits(points[i][0], points[i][1]);
+        points[i][X_INDEX] = point.x();
+        points[i][Y_INDEX] = point.y();
+        setLimits(points[i][X_INDEX], points[i][Y_INDEX]);
         i++;
     }
 

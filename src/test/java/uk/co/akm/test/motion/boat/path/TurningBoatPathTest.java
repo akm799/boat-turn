@@ -1,21 +1,28 @@
 package uk.co.akm.test.motion.boat.path;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import uk.co.akm.test.motion.boat.linear.TurningBoat;
 import uk.co.akm.test.motion.boat.math.MathConstants;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
 import uk.co.akm.test.motion.boat.model.impl.BoatConstantsImpl;
-import uk.co.akm.test.motion.boat.path.helper.BoatPath;
-import uk.co.akm.test.motion.boat.path.helper.impl.BoatPathUpdater;
+import uk.co.akm.test.motion.boat.path.helper.image.PixelSet;
+import uk.co.akm.test.motion.boat.path.helper.image.impl.ImageHelper;
+import uk.co.akm.test.motion.boat.path.helper.image.impl.PixelSetImpl;
+import uk.co.akm.test.motion.boat.path.helper.path.BoatPath;
+import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatPathUpdater;
 import uk.co.akm.test.motion.boat.phys.UpdatableState;
 import uk.co.akm.test.motion.boat.phys.Updater;
+
+import java.io.File;
 
 /**
  * Created by Thanos Mavroidis on 14/01/2018.
  */
 public class TurningBoatPathTest {
     private final int nSteps = 1000000;
+    private final String imageFilePath = "./data/image/boat-path.png";
 
     @Test
     public void shouldComeToRestWhileTurning() {
@@ -61,5 +68,16 @@ public class TurningBoatPathTest {
         final BoatPath path = pathUpdater.getPath();
         Assert.assertNotNull(path);
         Assert.assertEquals(nPathPoints, path.numberOfPoints());
+
+        final PixelSet pixels = new PixelSetImpl(600, 600, path);
+
+        final File outputImageFile = new File(imageFilePath);
+        if (outputImageFile.exists()) {
+            outputImageFile.delete();
+        }
+        ImageHelper.writeToBufferedImageFile(pixels, outputImageFile);
+
+        Assert.assertTrue(outputImageFile.exists());
+        Assert.assertTrue(outputImageFile.length() > 0);
     }
 }

@@ -1,8 +1,7 @@
-package uk.co.akm.test.motion.boat.path.helper.impl;
+package uk.co.akm.test.motion.boat.path.helper.path.impl;
 
-import uk.co.akm.test.motion.boat.path.helper.BoatPath;
+import uk.co.akm.test.motion.boat.path.helper.path.BoatPath;
 import uk.co.akm.test.motion.boat.phys.State;
-import uk.co.akm.test.motion.boat.phys.Updatable;
 import uk.co.akm.test.motion.boat.phys.UpdatableState;
 import uk.co.akm.test.motion.boat.phys.Updater;
 
