@@ -23,6 +23,7 @@ import java.io.File;
 public class TurningBoatPathTest {
     private final int nSteps = 1000000;
     private final String imageFilePath = "./data/image/boat-path.png";
+    private final String imageFilePathMultiple = "./data/image/boat-path-comparison.png";
 
     @Test
     public void shouldComeToRestWhileTurningWhileTurningSlowly() {
@@ -81,5 +82,52 @@ public class TurningBoatPathTest {
         Assert.assertTrue(outputImageFile.length() > 0);
 
         System.out.println(path);
+    }
+
+    @Test
+    public void shouldProduceMultiplePaths() {
+        final int width = 600;
+        final int height = 60;
+
+        final int nPathPoints = 10000;
+
+        final double kLon = 1;
+        final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
+
+        final double v0 = 10; // 36 km/h
+        final double time = 60; // 1 min (enough to slow down)
+
+        // Left-slow-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
+        final double omg1 = MathConstants.PI_OVER_TWO/time;
+        final UpdatableState underTest1 = new TurningBoat(constants, omg1, 0, v0, 0, 0, 0);
+        final PixelSet pixels1 = update(width, height, nPathPoints, time, underTest1);
+
+        // Left-faster-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
+        final double omg2 = 3*omg1;
+        final UpdatableState underTest2 = new TurningBoat(constants, omg2, 0, v0, 0, 0, 0);
+        final PixelSet pixels2 = update(width, height, nPathPoints, time, underTest2);
+
+        final PixelSet[] pixels = {pixels1, pixels2};
+        final byte[] values = {(byte)127, (byte)255};
+
+        final File outputImageFile = new File(imageFilePathMultiple);
+        if (outputImageFile.exists()) {
+            outputImageFile.delete();
+        }
+        ImageHelper.writeToBufferedImageFile(pixels, values, outputImageFile);
+
+        Assert.assertTrue(outputImageFile.exists());
+        Assert.assertTrue(outputImageFile.length() > 0);
+    }
+
+    private PixelSet update(int width, int height, int nPathPoints, double time, UpdatableState underTest) {
+        final BoatPathUpdater pathUpdater = new BoatPathUpdater(nSteps, nPathPoints);
+        pathUpdater.update(time, underTest);
+
+        final BoatPath path = pathUpdater.getPath();
+        Assert.assertNotNull(path);
+        Assert.assertEquals(nPathPoints, path.numberOfPoints());
+
+        return new PixelSetImpl(width, height, path);
     }
 }
