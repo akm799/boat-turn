@@ -2,6 +2,7 @@ package uk.co.akm.test.motion.boat.path.helper.path.impl;
 
 import uk.co.akm.test.motion.boat.path.helper.dim.DimSpecs;
 import uk.co.akm.test.motion.boat.path.helper.path.BoatPath;
+import uk.co.akm.test.motion.boat.path.helper.path.Limits;
 import uk.co.akm.test.motion.boat.phys.State;
 
 /**
@@ -50,6 +51,22 @@ public final class BoatPathImpl implements BoatPath, DimSpecs {
 
         if (y > yMax) {
             yMax = y;
+        }
+    }
+
+    @Override
+    public void resetLimits(Limits other) {
+        checkLimits(other);
+
+        xMin = other.xMin();
+        xMax = other.xMax();
+        yMin = other.yMin();
+        yMax = other.yMax();
+    }
+
+    private void checkLimits(Limits other) {
+        if (xMin < other.xMin() || xMax > other.xMax() || yMin < other.yMin() || yMax > other.yMax()) {
+            throw new IllegalArgumentException("New path limits exclude portion of the path.");
         }
     }
 
