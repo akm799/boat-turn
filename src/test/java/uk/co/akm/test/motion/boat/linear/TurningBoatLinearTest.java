@@ -10,7 +10,7 @@ import uk.co.akm.test.motion.boat.phys.Updater;
 /**
  * Created by Thanos Mavroidis on 14/01/2018.
  */
-public class TurningBoatLinerTest {
+public class TurningBoatLinearTest {
     private final int nSteps = 1000000;
 
     @Test
