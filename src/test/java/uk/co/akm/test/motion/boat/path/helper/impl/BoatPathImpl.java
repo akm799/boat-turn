@@ -19,6 +19,7 @@ public final class BoatPathImpl implements BoatPath {
         points = new double[nPoints][2];
     }
 
+    @Override
     public void addPoint(State point) {
         points[i][0] = point.x();
         points[i][1] = point.y();
