@@ -48,7 +48,7 @@ public class TurningBoatPathTest {
 
     @Test
     public void shouldProducePath() {
-        final int nPathPoints = 1000;
+        final int nPathPoints = 10000;
         final BoatPathUpdater pathUpdater = new BoatPathUpdater(nSteps, nPathPoints);
 
         final double kLon = 1;
@@ -79,5 +79,7 @@ public class TurningBoatPathTest {
 
         Assert.assertTrue(outputImageFile.exists());
         Assert.assertTrue(outputImageFile.length() > 0);
+
+        System.out.println(path);
     }
 }

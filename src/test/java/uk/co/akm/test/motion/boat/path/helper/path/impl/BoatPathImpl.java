@@ -82,4 +82,9 @@ public final class BoatPathImpl implements BoatPath, DimSpecs {
     public double[][] pathPoints() {
         return points;
     }
+
+    @Override
+    public String toString() {
+        return ("min=(" + xMin + ", " + yMin + ") max=(" + xMax + ", " + yMax + ")  " + i + " points.");
+    }
 }

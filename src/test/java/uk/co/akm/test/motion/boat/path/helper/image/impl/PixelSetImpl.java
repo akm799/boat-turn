@@ -21,15 +21,25 @@ public final class PixelSetImpl implements PixelSet, DimSpecs {
     }
 
     private void setPixels(BoatPath path) {
-        final double xf = width/(path.xMax() - path.xMin());
-        final double yf = height/(path.yMax() - path.yMin());
+        final double xMin = path.xMin();
+        final double yMin = path.yMin();
+        final double xf = width/(path.xMax() - xMin);
+        final double yf = height/(path.yMax() - yMin);
 
         final double[][] points = path.pathPoints();
         for (int i=0 ; i<path.numberOfPoints() ; i++) {
-            final int xp = (int)Math.round(points[i][X_INDEX]*xf);
-            final int yp = height - (int)Math.round(points[i][Y_INDEX]*yf);
+            final int xp = (int)Math.floor((points[i][X_INDEX] - xMin)*xf);
+            final int yp = height - (int)Math.floor((points[i][Y_INDEX] - yMin)*yf);
             nonBlankPixels[i][X_INDEX] = xp;
             nonBlankPixels[i][Y_INDEX] = yp;
+
+            if (xp == width) {
+                nonBlankPixels[i][X_INDEX] = width - 1;
+            }
+
+            if (yp == height) {
+                nonBlankPixels[i][Y_INDEX] = height - 1;
+            }
         }
     }
 
