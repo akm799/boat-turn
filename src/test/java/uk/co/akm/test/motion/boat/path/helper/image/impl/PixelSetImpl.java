@@ -25,11 +25,12 @@ public final class PixelSetImpl implements PixelSet, DimSpecs {
         final double yMin = path.yMin();
         final double xf = width/(path.xMax() - xMin);
         final double yf = height/(path.yMax() - yMin);
+        final double f = Math.min(xf, yf);
 
         final double[][] points = path.pathPoints();
         for (int i=0 ; i<path.numberOfPoints() ; i++) {
-            final int xp = (int)Math.floor((points[i][X_INDEX] - xMin)*xf);
-            final int yp = height - (int)Math.floor((points[i][Y_INDEX] - yMin)*yf);
+            final int xp = (int)Math.floor((points[i][X_INDEX] - xMin)*f);
+            final int yp = height - (int)Math.floor((points[i][Y_INDEX] - yMin)*f);
             nonBlankPixels[i][X_INDEX] = xp;
             nonBlankPixels[i][Y_INDEX] = yp;
 

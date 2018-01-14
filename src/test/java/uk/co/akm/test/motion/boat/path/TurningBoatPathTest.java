@@ -25,7 +25,7 @@ public class TurningBoatPathTest {
     private final String imageFilePath = "./data/image/boat-path.png";
 
     @Test
-    public void shouldComeToRestWhileTurning() {
+    public void shouldComeToRestWhileTurningWhileTurningSlowly() {
         final double kLon = 1;
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
@@ -47,7 +47,7 @@ public class TurningBoatPathTest {
     }
 
     @Test
-    public void shouldProducePath() {
+    public void shouldProducePathWhileTurningSlowly() {
         final int nPathPoints = 10000;
         final BoatPathUpdater pathUpdater = new BoatPathUpdater(nSteps, nPathPoints);
 
@@ -69,7 +69,7 @@ public class TurningBoatPathTest {
         Assert.assertNotNull(path);
         Assert.assertEquals(nPathPoints, path.numberOfPoints());
 
-        final PixelSet pixels = new PixelSetImpl(600, 600, path);
+        final PixelSet pixels = new PixelSetImpl(600, 20, path);
 
         final File outputImageFile = new File(imageFilePath);
         if (outputImageFile.exists()) {
