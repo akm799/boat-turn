@@ -6,7 +6,7 @@ import uk.co.akm.test.motion.boat.phys.UpdatableState;
 import uk.co.akm.test.motion.boat.phys.Updater;
 
 /**
- * Created by Thanos Mavroidis on 14/01/2018.
+ * Created by Thanos Mavroidis on 15/01/2018.
  */
 public final class BoatPathUpdater {
     private final int nSteps;
@@ -15,19 +15,19 @@ public final class BoatPathUpdater {
     private final BoatPath path;
     private final Updater.UpdateView updateView;
 
-    public BoatPathUpdater(int nSteps, int nPoints) {
+    public BoatPathUpdater(BoatPath path, int nSteps) {
+        this.path = path;
         this.nSteps = nSteps;
 
-        this.nViewSteps = nSteps/nPoints;
-        this.path = new BoatPathImpl(nPoints);
+        this.nViewSteps = nSteps/path.capacity();
         this.updateView = new BoatPathUpdateView(path);
     }
 
-    public void update(double time, UpdatableState state) {
+    public final void update(double time, UpdatableState state) {
         Updater.update(state, time, nSteps, updateView, nViewSteps);
     }
 
-    public BoatPath getPath() {
+    public final BoatPath getPath() {
         return path;
     }
 

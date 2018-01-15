@@ -7,6 +7,8 @@ import uk.co.akm.test.motion.boat.phys.State;
  */
 public interface BoatPath extends Limits {
 
+    int capacity();
+
     void addPoint(State point);
 
     int numberOfPoints();
