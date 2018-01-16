@@ -29,8 +29,10 @@ public class TurningBoatPathTest {
     private final int nSteps = 1000000;
     private final String imageFileAnglesPath = "./data/image/boat-angles-path.png";
     private final String imageFilePositionPath = "./data/image/boat-position-path.png";
-    private final String imageFileAnglesPathMultiple = "./data/image/boat-angles-path-omg-comparison.png";
-    private final String imageFilePositionPathMultiple = "./data/image/boat-position-path-omg-comparison.png";
+    private final String imageFileAnglesPathMultipleOmg = "./data/image/boat-angles-path-omg-comparison.png";
+    private final String imageFilePositionPathMultipleOmg = "./data/image/boat-position-path-omg-comparison.png";
+    private final String imageFileAnglesPathMultipleKRatio = "./data/image/boat-angles-path-k-ratio-comparison.png";
+    private final String imageFilePositionPathMultipleKRatio = "./data/image/boat-position-path-k-ratio-comparison.png";
 
     @Test
     public void shouldComeToRestWhileTurningWhileTurningSlowly() {
@@ -114,7 +116,7 @@ public class TurningBoatPathTest {
     }
 
     @Test
-    public void shouldProduceMultiplePositionPaths() {
+    public void shouldProduceMultiplePositionPathsWithOmegaVariation() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -122,11 +124,11 @@ public class TurningBoatPathTest {
             }
         };
 
-        multiplePathsTest("Multiple paths",600, 80, 4, factory, imageFilePositionPathMultiple);
+        multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, 4, factory, imageFilePositionPathMultipleOmg);
     }
 
     @Test
-    public void shouldProduceMultipleAnglesPaths() {
+    public void shouldProduceMultipleAnglesPathsWithOmegaVariation() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -134,12 +136,10 @@ public class TurningBoatPathTest {
             }
         };
 
-        multiplePathsTest("Multiple angles", 600, 100, 32, factory, imageFileAnglesPathMultiple);
+        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 100, 32, factory, imageFileAnglesPathMultipleOmg);
     }
 
-    private void multiplePathsTest(String name, int width, int height, int omgScaleFactor, BoatPathFactory factory, String imageFileName) {
-        final int nPathPoints = 10000;
-
+    private void multiplePathsTestWithOmegaVariation(String name, int width, int height, int omgScaleFactor, BoatPathFactory factory, String imageFileName) {
         final double kLon = 1;
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
@@ -149,11 +149,63 @@ public class TurningBoatPathTest {
         // Left-slow-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg1 = MathConstants.PI_OVER_TWO/time;
         final UpdatableState underTest1 = new TurningBoat(constants, omg1, 0, v0, 0, 0, 0);
-        final BoatPath path1 = update(factory.instance(nPathPoints), time, underTest1);
 
         // Left-faster-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg2 = omgScaleFactor*omg1;
         final UpdatableState underTest2 = new TurningBoat(constants, omg2, 0, v0, 0, 0, 0);
+
+        multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
+    }
+
+    @Test
+    public void shouldProduceMultiplePositionPathsWithKRatioVariation() {
+        final BoatPathFactory factory = new BoatPathFactory() {
+            @Override
+            public BoatPath instance(int nPoints) {
+                return new BoatPositionPath(nPoints);
+            }
+        };
+
+        multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, 200, factory, imageFilePositionPathMultipleKRatio);
+    }
+
+    @Test
+    public void shouldProduceMultipleAnglesPathsWithKRatioVariation() {
+        final BoatPathFactory factory = new BoatPathFactory() {
+            @Override
+            public BoatPath instance(int nPoints) {
+                return new BoatAnglesPath(nPoints);
+            }
+        };
+
+        multiplePathsTestWithKRatioVariation("Multiple angles paths paths with k-ratio variation",600, 10, 200, factory, imageFileAnglesPathMultipleKRatio);
+    }
+
+    private void multiplePathsTestWithKRatioVariation(String name, int width, int height, int kRatScaleFactor, BoatPathFactory factory, String imageFileName) {
+        final double kLon = 1;
+        final double kLatOverKLon1 = 5;
+        final double kLatOverKLon2 = kLatOverKLon1*kRatScaleFactor;
+
+        final BoatConstants constants1 = new BoatConstantsImpl(kLon, kLatOverKLon1, 10);
+        final BoatConstants constants2 = new BoatConstantsImpl(kLon, kLatOverKLon2, 10);
+
+        final double v0 = 10; // 36 km/h
+        final double time = 60; // 1 min (enough to slow down)
+        final double omg = Math.PI/time;
+
+        // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
+        final UpdatableState underTest1 = new TurningBoat(constants1, omg, 0, v0, 0, 0, 0);
+
+        // Left-turning boat, with higher lateral to longitudinal resistance ratio, setting of from the origin with an initial speed v0 along the x-axis direction.
+        final UpdatableState underTest2 = new TurningBoat(constants2, omg, 0, v0, 0, 0, 0);
+
+        multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
+    }
+
+    private void multiplePathsTest(String name, int width, int height, UpdatableState underTest1, UpdatableState underTest2, double time, BoatPathFactory factory, String imageFileName) {
+        final int nPathPoints = 10000;
+
+        final BoatPath path1 = update(factory.instance(nPathPoints), time, underTest1);
         final BoatPath path2 = update(factory.instance(nPathPoints), time, underTest2);
 
         final BoatPath[] paths = setCommonPathLimits(path1, path2);
