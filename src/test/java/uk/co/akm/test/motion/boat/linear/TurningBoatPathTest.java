@@ -1,8 +1,7 @@
-package uk.co.akm.test.motion.boat.path;
+package uk.co.akm.test.motion.boat.linear;
 
 import org.junit.Assert;
 import org.junit.Test;
-import uk.co.akm.test.motion.boat.linear.TurningBoat;
 import uk.co.akm.test.motion.boat.math.MathConstants;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
 import uk.co.akm.test.motion.boat.model.impl.BoatConstantsImpl;
@@ -20,9 +19,6 @@ import uk.co.akm.test.motion.boat.phys.Updater;
 import java.io.File;
 
 /**
- * //TODO Add test that produces multiple plot: same angular velocity but with different kLat/kLon ratios.
- * //TODO Add test that produces multiple plot: (boat heading vs time) and (velocity vector heading vs time).
- *
  * Created by Thanos Mavroidis on 14/01/2018.
  */
 public class TurningBoatPathTest {
