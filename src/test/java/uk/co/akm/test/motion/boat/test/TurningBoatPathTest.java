@@ -1,7 +1,6 @@
-package uk.co.akm.test.motion.boat.linear;
+package uk.co.akm.test.motion.boat.test;
 
 import org.junit.Assert;
-import org.junit.Test;
 import uk.co.akm.test.motion.boat.math.MathConstants;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
 import uk.co.akm.test.motion.boat.model.impl.BoatConstantsImpl;
@@ -19,19 +18,25 @@ import uk.co.akm.test.motion.boat.phys.Updater;
 import java.io.File;
 
 /**
- * Created by Thanos Mavroidis on 14/01/2018.
+ * Created by Thanos Mavroidis on 20/01/2018.
  */
-public class TurningBoatPathTest {
+public abstract class TurningBoatPathTest {
     private final int nSteps = 1000000;
-    private final String imageFileAnglesPath = "./data/image/boat-angles-path.png";
-    private final String imageFilePositionPath = "./data/image/boat-position-path.png";
-    private final String imageFileAnglesPathMultipleOmg = "./data/image/boat-angles-path-omg-comparison.png";
-    private final String imageFilePositionPathMultipleOmg = "./data/image/boat-position-path-omg-comparison.png";
-    private final String imageFileAnglesPathMultipleKRatio = "./data/image/boat-angles-path-k-ratio-comparison.png";
-    private final String imageFilePositionPathMultipleKRatio = "./data/image/boat-position-path-k-ratio-comparison.png";
 
-    @Test
-    public void shouldComeToRestWhileTurningWhileTurningSlowly() {
+    private final String baseImageFolder = "./data/image/";
+
+    private final String imageFileAnglesPath = "boat-angles-path.png";
+    private final String imageFilePositionPath = "boat-position-path.png";
+    private final String imageFileAnglesPathMultipleOmg = "boat-angles-path-omg-comparison.png";
+    private final String imageFilePositionPathMultipleOmg = "boat-position-path-omg-comparison.png";
+    private final String imageFileAnglesPathMultipleKRatio = "boat-angles-path-k-ratio-comparison.png";
+    private final String imageFilePositionPathMultipleKRatio = "boat-position-path-k-ratio-comparison.png";
+
+    protected abstract String imageSubFolder();
+
+    protected abstract UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0);
+
+    protected void comeToRestWhileTurningWhileTurningSlowlyTest() {
         final double kLon = 1;
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
@@ -42,7 +47,7 @@ public class TurningBoatPathTest {
         final double velocityLimitCloseness = 1.0E-25;
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest = new TurningBoat(constants, omg, 0, v0, 0, 0, 0);
+        final UpdatableState underTest = boatInstance(constants, omg, 0, v0, 0, 0, 0);
 
         // Turning boat slows down.
         Updater.update(underTest, time, nSteps);
@@ -52,8 +57,7 @@ public class TurningBoatPathTest {
         Assert.assertTrue(underTest.v() < velocityLimitCloseness);
     }
 
-    @Test
-    public void shouldProducePositionPathWhileTurningSlowly() {
+    protected void producePositionPathWhileTurningSlowlyTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -64,8 +68,7 @@ public class TurningBoatPathTest {
         testPathWhileTurningSlowly("Position", 600, 20, factory, imageFilePositionPath);
     }
 
-    @Test
-    public void shouldProduceAnglesPathWhileTurningSlowly() {
+    protected void produceAnglesPathWhileTurningSlowlyTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -88,7 +91,7 @@ public class TurningBoatPathTest {
         final double omg = MathConstants.PI_OVER_TWO/time;
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest = new TurningBoat(constants, omg, 0, v0, 0, 0, 0);
+        final UpdatableState underTest = boatInstance(constants, omg, 0, v0, 0, 0, 0);
 
         // Turning boat slows down.
         pathUpdater.update(time, underTest);
@@ -99,7 +102,7 @@ public class TurningBoatPathTest {
 
         final PixelSet pixels = new PixelSetImpl(width, height, path);
 
-        final File outputImageFile = new File(imageFileName);
+        final File outputImageFile = fileInstance(imageFileName);
         if (outputImageFile.exists()) {
             outputImageFile.delete();
         }
@@ -111,8 +114,7 @@ public class TurningBoatPathTest {
         System.out.println(name + ": " + path);
     }
 
-    @Test
-    public void shouldProduceMultiplePositionPathsWithOmegaVariation() {
+    protected void produceMultiplePositionPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -123,8 +125,7 @@ public class TurningBoatPathTest {
         multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, 4, factory, imageFilePositionPathMultipleOmg);
     }
 
-    @Test
-    public void shouldProduceMultipleAnglesPathsWithOmegaVariation() {
+    protected void produceMultipleAnglesPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -144,17 +145,16 @@ public class TurningBoatPathTest {
 
         // Left-slow-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg1 = MathConstants.PI_OVER_TWO/time;
-        final UpdatableState underTest1 = new TurningBoat(constants, omg1, 0, v0, 0, 0, 0);
+        final UpdatableState underTest1 = boatInstance(constants, omg1, 0, v0, 0, 0, 0);
 
         // Left-faster-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg2 = omgScaleFactor*omg1;
-        final UpdatableState underTest2 = new TurningBoat(constants, omg2, 0, v0, 0, 0, 0);
+        final UpdatableState underTest2 = boatInstance(constants, omg2, 0, v0, 0, 0, 0);
 
         multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
     }
 
-    @Test
-    public void shouldProduceMultiplePositionPathsWithKRatioVariation() {
+    protected void produceMultiplePositionPathsWithKRatioVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -165,8 +165,7 @@ public class TurningBoatPathTest {
         multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, 200, factory, imageFilePositionPathMultipleKRatio);
     }
 
-    @Test
-    public void shouldProduceMultipleAnglesPathsWithKRatioVariation() {
+    protected void produceMultipleAnglesPathsWithKRatioVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -190,10 +189,10 @@ public class TurningBoatPathTest {
         final double omg = Math.PI/time;
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest1 = new TurningBoat(constants1, omg, 0, v0, 0, 0, 0);
+        final UpdatableState underTest1 = boatInstance(constants1, omg, 0, v0, 0, 0, 0);
 
         // Left-turning boat, with higher lateral to longitudinal resistance ratio, setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest2 = new TurningBoat(constants2, omg, 0, v0, 0, 0, 0);
+        final UpdatableState underTest2 = boatInstance(constants2, omg, 0, v0, 0, 0, 0);
 
         multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
     }
@@ -208,7 +207,7 @@ public class TurningBoatPathTest {
         final PixelSet[] pixels = toPixelSets(width, height, paths);
         final byte[] values = {(byte)127, (byte)255};
 
-        final File outputImageFile = new File(imageFileName);
+        final File outputImageFile = fileInstance(imageFileName);
         if (outputImageFile.exists()) {
             outputImageFile.delete();
         }
@@ -310,6 +309,13 @@ public class TurningBoatPathTest {
         }
 
         return pixels;
+    }
+
+    private File fileInstance(String imageFileName) {
+        final String subFolderName = imageSubFolder();
+        final String subFolder = (subFolderName.endsWith("/") ? subFolderName : (subFolderName + "/"));
+
+        return new File(baseImageFolder + subFolder + imageFileName);
     }
 
     interface BoatPathFactory {
