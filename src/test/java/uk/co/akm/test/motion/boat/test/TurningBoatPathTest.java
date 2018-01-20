@@ -36,7 +36,7 @@ public abstract class TurningBoatPathTest {
 
     protected abstract UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0);
 
-    protected void comeToRestWhileTurningWhileTurningSlowlyTest() {
+    protected final void comeToRestWhileTurningWhileTurningSlowlyTest() {
         final double kLon = 1;
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
@@ -57,7 +57,7 @@ public abstract class TurningBoatPathTest {
         Assert.assertTrue(underTest.v() < velocityLimitCloseness);
     }
 
-    protected void producePositionPathWhileTurningSlowlyTest() {
+    protected final void producePositionPathWhileTurningSlowlyTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -68,7 +68,7 @@ public abstract class TurningBoatPathTest {
         testPathWhileTurningSlowly("Position", 600, 20, factory, imageFilePositionPath);
     }
 
-    protected void produceAnglesPathWhileTurningSlowlyTest() {
+    protected final void produceAnglesPathWhileTurningSlowlyTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -111,10 +111,10 @@ public abstract class TurningBoatPathTest {
         Assert.assertTrue(outputImageFile.exists());
         Assert.assertTrue(outputImageFile.length() > 0);
 
-        System.out.println(name + ": " + path);
+        System.out.println(imageSubFolder() + "> " + name + ": " + path);
     }
 
-    protected void produceMultiplePositionPathsWithOmegaVariationTest() {
+    protected final void produceMultiplePositionPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -125,7 +125,7 @@ public abstract class TurningBoatPathTest {
         multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, 4, factory, imageFilePositionPathMultipleOmg);
     }
 
-    protected void produceMultipleAnglesPathsWithOmegaVariationTest() {
+    protected final void produceMultipleAnglesPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -154,7 +154,7 @@ public abstract class TurningBoatPathTest {
         multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
     }
 
-    protected void produceMultiplePositionPathsWithKRatioVariationTest() {
+    protected final void produceMultiplePositionPathsWithKRatioVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -165,7 +165,7 @@ public abstract class TurningBoatPathTest {
         multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, 200, factory, imageFilePositionPathMultipleKRatio);
     }
 
-    protected void produceMultipleAnglesPathsWithKRatioVariationTest() {
+    protected final void produceMultipleAnglesPathsWithKRatioVariationTest() {
         final BoatPathFactory factory = new BoatPathFactory() {
             @Override
             public BoatPath instance(int nPoints) {
@@ -216,7 +216,7 @@ public abstract class TurningBoatPathTest {
         Assert.assertTrue(outputImageFile.exists());
         Assert.assertTrue(outputImageFile.length() > 0);
 
-        System.out.println(name + ": " + paths[0]);
+        System.out.println(imageSubFolder() + "> " + name + ": " + paths[0]);
     }
 
     private BoatPath update(BoatPath input, double time, UpdatableState underTest) {
