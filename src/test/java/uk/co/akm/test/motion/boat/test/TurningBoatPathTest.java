@@ -58,28 +58,16 @@ public abstract class TurningBoatPathTest {
     }
 
     protected final void producePositionPathWhileTurningSlowlyTest() {
-        final BoatPathFactory factory = new BoatPathFactory() {
-            @Override
-            public BoatPath instance(int nPoints) {
-                return new BoatPositionPath(nPoints);
-            }
-        };
-
-        testPathWhileTurningSlowly("Position", 600, 20, factory, imageFilePositionPath);
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        testPathWhileTurningSlowly("Position", 600, 20, true, factory, imageFilePositionPath);
     }
 
     protected final void produceAnglesPathWhileTurningSlowlyTest() {
-        final BoatPathFactory factory = new BoatPathFactory() {
-            @Override
-            public BoatPath instance(int nPoints) {
-                return new BoatAnglesPath(nPoints);
-            }
-        };
-
-        testPathWhileTurningSlowly("Angles",600, 20, factory, imageFileAnglesPath);
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        testPathWhileTurningSlowly("Angles",600, 600, false, factory, imageFileAnglesPath);
     }
 
-    private void testPathWhileTurningSlowly(String name, int width, int height, BoatPathFactory factory, String imageFileName) {
+    private void testPathWhileTurningSlowly(String name, int width, int height, boolean oneScale, BoatPathFactory factory, String imageFileName) {
         final int nPathPoints = 10000;
         final BoatPathUpdater pathUpdater = new BoatPathUpdater(factory.instance(nPathPoints), nSteps);
 
@@ -100,7 +88,7 @@ public abstract class TurningBoatPathTest {
         Assert.assertNotNull(path);
         Assert.assertEquals(nPathPoints, path.numberOfPoints());
 
-        final PixelSet pixels = new PixelSetImpl(width, height, path);
+        final PixelSet pixels = new PixelSetImpl(width, height, oneScale, path);
 
         final File outputImageFile = fileInstance(imageFileName);
         if (outputImageFile.exists()) {
@@ -115,28 +103,16 @@ public abstract class TurningBoatPathTest {
     }
 
     protected final void produceMultiplePositionPathsWithOmegaVariationTest() {
-        final BoatPathFactory factory = new BoatPathFactory() {
-            @Override
-            public BoatPath instance(int nPoints) {
-                return new BoatPositionPath(nPoints);
-            }
-        };
-
-        multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, 4, factory, imageFilePositionPathMultipleOmg);
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, true, 4, factory, imageFilePositionPathMultipleOmg);
     }
 
     protected final void produceMultipleAnglesPathsWithOmegaVariationTest() {
-        final BoatPathFactory factory = new BoatPathFactory() {
-            @Override
-            public BoatPath instance(int nPoints) {
-                return new BoatAnglesPath(nPoints);
-            }
-        };
-
-        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 100, 32, factory, imageFileAnglesPathMultipleOmg);
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 600, false, 32, factory, imageFileAnglesPathMultipleOmg);
     }
 
-    private void multiplePathsTestWithOmegaVariation(String name, int width, int height, int omgScaleFactor, BoatPathFactory factory, String imageFileName) {
+    private void multiplePathsTestWithOmegaVariation(String name, int width, int height, boolean oneScale, int omgScaleFactor, BoatPathFactory factory, String imageFileName) {
         final double kLon = 1;
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
@@ -151,32 +127,20 @@ public abstract class TurningBoatPathTest {
         final double omg2 = omgScaleFactor*omg1;
         final UpdatableState underTest2 = boatInstance(constants, omg2, 0, v0, 0, 0, 0);
 
-        multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
+        multiplePathsTest(name, width, height, oneScale, underTest1, underTest2, time, factory, imageFileName);
     }
 
     protected final void produceMultiplePositionPathsWithKRatioVariationTest() {
-        final BoatPathFactory factory = new BoatPathFactory() {
-            @Override
-            public BoatPath instance(int nPoints) {
-                return new BoatPositionPath(nPoints);
-            }
-        };
-
-        multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, 200, factory, imageFilePositionPathMultipleKRatio);
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, true, 200, factory, imageFilePositionPathMultipleKRatio);
     }
 
     protected final void produceMultipleAnglesPathsWithKRatioVariationTest() {
-        final BoatPathFactory factory = new BoatPathFactory() {
-            @Override
-            public BoatPath instance(int nPoints) {
-                return new BoatAnglesPath(nPoints);
-            }
-        };
-
-        multiplePathsTestWithKRatioVariation("Multiple angles paths paths with k-ratio variation",600, 10, 200, factory, imageFileAnglesPathMultipleKRatio);
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        multiplePathsTestWithKRatioVariation("Multiple angles paths paths with k-ratio variation",600, 600, false, 200, factory, imageFileAnglesPathMultipleKRatio);
     }
 
-    private void multiplePathsTestWithKRatioVariation(String name, int width, int height, int kRatScaleFactor, BoatPathFactory factory, String imageFileName) {
+    private void multiplePathsTestWithKRatioVariation(String name, int width, int height, boolean oneScale, int kRatScaleFactor, BoatPathFactory factory, String imageFileName) {
         final double kLon = 1;
         final double kLatOverKLon1 = 5;
         final double kLatOverKLon2 = kLatOverKLon1*kRatScaleFactor;
@@ -194,17 +158,17 @@ public abstract class TurningBoatPathTest {
         // Left-turning boat, with higher lateral to longitudinal resistance ratio, setting of from the origin with an initial speed v0 along the x-axis direction.
         final UpdatableState underTest2 = boatInstance(constants2, omg, 0, v0, 0, 0, 0);
 
-        multiplePathsTest(name, width, height, underTest1, underTest2, time, factory, imageFileName);
+        multiplePathsTest(name, width, height, oneScale, underTest1, underTest2, time, factory, imageFileName);
     }
 
-    private void multiplePathsTest(String name, int width, int height, UpdatableState underTest1, UpdatableState underTest2, double time, BoatPathFactory factory, String imageFileName) {
+    private void multiplePathsTest(String name, int width, int height, boolean oneScale, UpdatableState underTest1, UpdatableState underTest2, double time, BoatPathFactory factory, String imageFileName) {
         final int nPathPoints = 10000;
 
         final BoatPath path1 = update(factory.instance(nPathPoints), time, underTest1);
         final BoatPath path2 = update(factory.instance(nPathPoints), time, underTest2);
 
         final BoatPath[] paths = setCommonPathLimits(path1, path2);
-        final PixelSet[] pixels = toPixelSets(width, height, paths);
+        final PixelSet[] pixels = toPixelSets(width, height, oneScale, paths);
         final byte[] values = {(byte)127, (byte)255};
 
         final File outputImageFile = fileInstance(imageFileName);
@@ -302,10 +266,10 @@ public abstract class TurningBoatPathTest {
         };
     }
 
-    private PixelSet[] toPixelSets(int width, int height, BoatPath[] paths) {
+    private PixelSet[] toPixelSets(int width, int height, boolean oneScale, BoatPath[] paths) {
         final PixelSet[] pixels = new PixelSet[paths.length];
         for (int i=0 ; i<paths.length; i++) {
-            pixels[i] = new PixelSetImpl(width, height, paths[i]);
+            pixels[i] = new PixelSetImpl(width, height, oneScale, paths[i]);
         }
 
         return pixels;
