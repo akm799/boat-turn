@@ -64,7 +64,7 @@ public final class TurningBoat extends Body {
     }
 
     private double estimateLinearResistanceForce(double k, double vTransition, double v, double vSqSigned) {
-        if (v > vTransition) {
+        if (Math.abs(v) > vTransition) {
             return -k*vSqSigned;
         } else {
             return -k*v;

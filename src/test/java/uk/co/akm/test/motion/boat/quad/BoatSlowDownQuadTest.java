@@ -30,7 +30,7 @@ public final class BoatSlowDownQuadTest extends BoatSlowDownTest {
         testSlowDown(v0);
     }
 
-//    @Test
+    @Test
     public void shouldComeToRestGoingBackwards() {
         final double v0 = -10; // -36 km/h
         testSlowDown(v0);
