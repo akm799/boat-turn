@@ -1,4 +1,4 @@
-package uk.co.akm.test.motion.boat.linear;
+package uk.co.akm.test.motion.boat.quad;
 
 import org.junit.Test;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
@@ -9,12 +9,14 @@ import uk.co.akm.test.motion.boat.test.BoatSlowDownTest;
 /**
  * Created by Thanos Mavroidis on 21/01/2018.
  */
-public final class BoatSlowDownLinearTest extends BoatSlowDownTest {
-    private final double distanceLimitCloseness = 0.007;
+public final class BoatSlowDownQuadTest extends BoatSlowDownTest {
+    private final double distanceLimitCloseness = 0.01;
 
     @Override
     protected double computeDistanceLimit(double k, double v0) {
-        return Math.abs(v0)/k;
+        final double v0Abs = Math.abs(v0);
+
+        return (1 + Math.log(v0Abs))/k;
     }
 
     @Override

@@ -10,14 +10,13 @@ import uk.co.akm.test.motion.boat.phys.Updater;
  */
 public abstract class BoatSlowDownTest {
     private final int nSteps = 1000000;
-    private final double distanceLimitCloseness = 0.007;
     private final double velocityLimitCloseness = 1.0E-250;
 
     protected abstract double computeDistanceLimit(double k, double v0);
 
     protected abstract UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0);
 
-    protected final void slowDownTest(BoatConstants constants, double v0, double time) {
+    protected final void slowDownTest(BoatConstants constants, double v0, double time, double distanceLimitCloseness) {
         final double k = (v0 >= 0 ? constants.kLon() : constants.kLonReverse());
         final double distanceLimit = computeDistanceLimit(k, v0);
 
