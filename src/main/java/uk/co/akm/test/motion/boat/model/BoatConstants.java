@@ -19,4 +19,14 @@ public interface BoatConstants {
      * @return the longitudinal motion resistance coefficient in the reverse direction (i.e. when the boat is reversing along its axis).
      */
     double kLonReverse();
+
+    /**
+     * @return the coefficient that when multiplied by the square of the boat longitudinal speed yields the rudder deflection force.
+     */
+    double kRud();
+
+    /**
+     * @return the rudder data used to estimate the resistance torque to the boat angular motion.
+     */
+    RudderData getRudderData();
 }
