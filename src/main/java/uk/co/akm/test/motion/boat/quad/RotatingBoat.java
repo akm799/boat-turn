@@ -8,7 +8,8 @@ import uk.co.akm.test.motion.boat.phys.State;
 
 /**
  * A boat that moves at a constant velocity but rotates depending on the value of that velocity. To achieve this effect,
- * only the angular acceleration is updated whereas the linear acceleration is always zero.
+ * only the angular acceleration is updated whereas the linear acceleration is always zero. This implementation is meant
+ * for studying only the boat rotation characteristics and not its linear motion.
  *
  * Created by Thanos Mavroidis on 26/01/2018.
  */
@@ -33,8 +34,8 @@ public final class RotatingBoat extends Body {
     private double omg;
     private double omgSqSigned;
 
-    public RotatingBoat(BoatConstants constants, double hdn0, double vx0, double vy0, double x0, double y0) {
-        super(0, 0, 0, hdn0, 0, 0, vx0, vy0, 0, x0, y0, 0);
+    public RotatingBoat(BoatConstants constants, double omgHdn0, double hdn0, double v0) {
+        super(omgHdn0, 0, 0, hdn0, 0, 0, v0, 0, 0, 0, 0, 0);
 
         kLat = constants.kLat();
         kRud = constants.kRud();
