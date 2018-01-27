@@ -12,7 +12,7 @@ import uk.co.akm.test.motion.boat.test.TurningBoatPathTest;
 public final class TurningBoatPathLinearTest extends TurningBoatPathTest {
 
     protected String imageSubFolder() {
-        return "linear";
+        return "linear/turn";
     }
 
     protected UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0) {
