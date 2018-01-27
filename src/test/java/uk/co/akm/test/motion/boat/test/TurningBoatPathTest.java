@@ -5,7 +5,6 @@ import uk.co.akm.test.motion.boat.math.MathConstants;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
 import uk.co.akm.test.motion.boat.model.impl.BoatConstantsImpl;
 import uk.co.akm.test.motion.boat.path.helper.image.PixelSet;
-import uk.co.akm.test.motion.boat.path.helper.image.impl.ImageHelper;
 import uk.co.akm.test.motion.boat.path.helper.image.impl.PixelSetImpl;
 import uk.co.akm.test.motion.boat.path.helper.path.BoatPath;
 import uk.co.akm.test.motion.boat.path.helper.path.Limits;
@@ -15,24 +14,17 @@ import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatPositionPath;
 import uk.co.akm.test.motion.boat.phys.UpdatableState;
 import uk.co.akm.test.motion.boat.phys.Updater;
 
-import java.io.File;
 
 /**
  * Created by Thanos Mavroidis on 20/01/2018.
  */
-public abstract class TurningBoatPathTest {
-    private final int nSteps = 1000000;
-
-    private final String baseImageFolder = "./data/image/";
-
+public abstract class TurningBoatPathTest extends BaseBoatPathTest {
     private final String imageFileAnglesPath = "boat-angles-path.png";
     private final String imageFilePositionPath = "boat-position-path.png";
     private final String imageFileAnglesPathMultipleOmg = "boat-angles-path-omg-comparison.png";
     private final String imageFilePositionPathMultipleOmg = "boat-position-path-omg-comparison.png";
     private final String imageFileAnglesPathMultipleKRatio = "boat-angles-path-k-ratio-comparison.png";
     private final String imageFilePositionPathMultipleKRatio = "boat-position-path-k-ratio-comparison.png";
-
-    protected abstract String imageSubFolder();
 
     protected abstract UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0);
 
@@ -90,16 +82,7 @@ public abstract class TurningBoatPathTest {
 
         final PixelSet pixels = new PixelSetImpl(width, height, oneScale, path);
 
-        final File outputImageFile = fileInstance(imageFileName);
-        if (outputImageFile.exists()) {
-            outputImageFile.delete();
-        }
-        ImageHelper.writeToBufferedImageFile(pixels, outputImageFile);
-
-        Assert.assertTrue(outputImageFile.exists());
-        Assert.assertTrue(outputImageFile.length() > 0);
-
-        System.out.println(imageSubFolder() + "> " + name + ": " + path);
+        writeToImageFile(name, path.toString(), pixels, imageFileName);
     }
 
     protected final void produceMultiplePositionPathsWithOmegaVariationTest() {
@@ -171,16 +154,7 @@ public abstract class TurningBoatPathTest {
         final PixelSet[] pixels = toPixelSets(width, height, oneScale, paths);
         final byte[] values = {(byte)127, (byte)255};
 
-        final File outputImageFile = fileInstance(imageFileName);
-        if (outputImageFile.exists()) {
-            outputImageFile.delete();
-        }
-        ImageHelper.writeToBufferedImageFile(pixels, values, outputImageFile);
-
-        Assert.assertTrue(outputImageFile.exists());
-        Assert.assertTrue(outputImageFile.length() > 0);
-
-        System.out.println(imageSubFolder() + "> " + name + ": " + paths[0]);
+        writeToImageFile(name, paths[0].toString(), pixels, values, imageFileName);
     }
 
     private BoatPath update(BoatPath input, double time, UpdatableState underTest) {
@@ -273,13 +247,6 @@ public abstract class TurningBoatPathTest {
         }
 
         return pixels;
-    }
-
-    private File fileInstance(String imageFileName) {
-        final String subFolderName = imageSubFolder();
-        final String subFolder = (subFolderName.endsWith("/") ? subFolderName : (subFolderName + "/"));
-
-        return new File(baseImageFolder + subFolder + imageFileName);
     }
 
     interface BoatPathFactory {
