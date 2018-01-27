@@ -27,10 +27,8 @@ public final class RotatingBoat extends Body {
     private final double omegaTransitionBack;
     private final double omegaTransitionFront;
 
-    private double cosa;
-    private double sina;
-    private double vLon;
-    private double vLonSqSigned;
+    private double v;
+    private double vSqSigned;
     private double omg;
     private double omgSqSigned;
 
@@ -64,14 +62,8 @@ public final class RotatingBoat extends Body {
 
     @Override
     protected void initUpdate(State start, double dt) {
-        final TrigValues hdn = start.hdnTrig();
-        cosa = hdn.cos();
-        sina = hdn.sin();
-
-        final double vx = start.vx();
-        final double vy = start.vy();
-        vLon =  vx*cosa + vy*sina;
-        vLonSqSigned = vLon*Math.abs(vLon);
+        v = v();
+        vSqSigned = v*Math.abs(v);
 
         omg = start.omgHdn();
         omgSqSigned = omg*Math.abs(omg);
@@ -79,12 +71,12 @@ public final class RotatingBoat extends Body {
 
     @Override
     protected void updateAngularAcceleration(State start, double dt) {
-        final double rudderForce = estimateForce(kRud, V_TRANSITION, vLon, vLonSqSigned);
+        final double rudderForce = estimateForce(kRud, V_TRANSITION, v, vSqSigned);
         final double rudderTorque = rudderForce*rudderData.cogDistanceFromStern;
 
         final double resistanceTorque = estimateResistanceTorque(omg, omgSqSigned);
 
-        final double totalTorque = rudderTorque - resistanceTorque;
+        final double totalTorque = rudderTorque + resistanceTorque;
 
         aHdn = totalTorque; // Assume moment of inertia value of 1.
     }

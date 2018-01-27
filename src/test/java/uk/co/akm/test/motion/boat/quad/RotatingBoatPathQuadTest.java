@@ -19,9 +19,8 @@ public final class RotatingBoatPathQuadTest extends RotatingBoatPathTest {
     }
 
     @Override
-    protected BoatConstants boatConstants() {
-        final double kLon = 1;
-        return new BoatConstantsImpl(kLon, 50, 10, rudderData);
+    protected BoatConstants boatConstants(double kLon, double kLatOverKLon) {
+        return new BoatConstantsImpl(kLon, kLatOverKLon, 10, rudderData);
     }
 
     @Override
@@ -31,6 +30,6 @@ public final class RotatingBoatPathQuadTest extends RotatingBoatPathTest {
 
     @Test
     public void shouldRotate() {
-        rotationTest();
+        rotationTest(1, 5,0.5 , 600, 600);
     }
 }
