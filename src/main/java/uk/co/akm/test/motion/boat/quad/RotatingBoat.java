@@ -1,6 +1,5 @@
 package uk.co.akm.test.motion.boat.quad;
 
-import uk.co.akm.test.motion.boat.math.TrigValues;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
 import uk.co.akm.test.motion.boat.model.RudderData;
 import uk.co.akm.test.motion.boat.phys.Body;
