@@ -30,6 +30,6 @@ public final class RotatingBoatPathQuadTest extends RotatingBoatPathTest {
 
     @Test
     public void shouldRotate() {
-        rotationTest(1, 5,0.5 , 600, 600);
+        rotationTest(1, 5,0.3, 600, 600);
     }
 }

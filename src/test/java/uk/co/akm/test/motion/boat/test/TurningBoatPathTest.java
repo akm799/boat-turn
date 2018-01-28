@@ -51,15 +51,15 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
 
     protected final void producePositionPathWhileTurningSlowlyTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
-        testPathWhileTurningSlowly("Position", 600, 20, true, factory, imageFilePositionPath);
+        testPathWhileTurningSlowly("Position", 600, 20, true, factory,60, imageFilePositionPath);
     }
 
     protected final void produceAnglesPathWhileTurningSlowlyTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
-        testPathWhileTurningSlowly("Angles",600, 600, false, factory, imageFileAnglesPath);
+        testPathWhileTurningSlowly("Angles",600, 600, false, factory,1, imageFileAnglesPath);
     }
 
-    private void testPathWhileTurningSlowly(String name, int width, int height, boolean oneScale, BoatPathFactory factory, String imageFileName) {
+    private void testPathWhileTurningSlowly(String name, int width, int height, boolean oneScale, BoatPathFactory factory, double time, String imageFileName) {
         final int nPathPoints = 10000;
         final BoatPathUpdater pathUpdater = new BoatPathUpdater(factory.instance(nPathPoints), nSteps);
 
@@ -67,7 +67,6 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
         final double v0 = 10; // 36 km/h
-        final double time = 60; // 1 min (enough to slow down)
         final double omg = MathConstants.PI_OVER_TWO/time;
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
@@ -87,20 +86,19 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
 
     protected final void produceMultiplePositionPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
-        multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, true, 4, factory, imageFilePositionPathMultipleOmg);
+        multiplePathsTestWithOmegaVariation("Multiple position paths with omega variation",600, 80, true, 4, factory, 60, imageFilePositionPathMultipleOmg);
     }
 
     protected final void produceMultipleAnglesPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
-        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 600, false, 32, factory, imageFileAnglesPathMultipleOmg);
+        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 600, false, 32, factory, 2.05, imageFileAnglesPathMultipleOmg);
     }
 
-    private void multiplePathsTestWithOmegaVariation(String name, int width, int height, boolean oneScale, int omgScaleFactor, BoatPathFactory factory, String imageFileName) {
+    private void multiplePathsTestWithOmegaVariation(String name, int width, int height, boolean oneScale, int omgScaleFactor, BoatPathFactory factory, double time, String imageFileName) {
         final double kLon = 1;
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10);
 
         final double v0 = 10; // 36 km/h
-        final double time = 60; // 1 min (enough to slow down)
 
         // Left-slow-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg1 = MathConstants.PI_OVER_TWO/time;
@@ -115,15 +113,15 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
 
     protected final void produceMultiplePositionPathsWithKRatioVariationTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
-        multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, true, 200, factory, imageFilePositionPathMultipleKRatio);
+        multiplePathsTestWithKRatioVariation("Multiple position paths paths with k-ratio variation",600, 40, true, 200, factory,60, imageFilePositionPathMultipleKRatio);
     }
 
     protected final void produceMultipleAnglesPathsWithKRatioVariationTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
-        multiplePathsTestWithKRatioVariation("Multiple angles paths paths with k-ratio variation",600, 600, false, 200, factory, imageFileAnglesPathMultipleKRatio);
+        multiplePathsTestWithKRatioVariation("Multiple angles paths paths with k-ratio variation",600, 600, false, 5, factory, 2.5, imageFileAnglesPathMultipleKRatio);
     }
 
-    private void multiplePathsTestWithKRatioVariation(String name, int width, int height, boolean oneScale, int kRatScaleFactor, BoatPathFactory factory, String imageFileName) {
+    private void multiplePathsTestWithKRatioVariation(String name, int width, int height, boolean oneScale, int kRatScaleFactor, BoatPathFactory factory, double time, String imageFileName) {
         final double kLon = 1;
         final double kLatOverKLon1 = 5;
         final double kLatOverKLon2 = kLatOverKLon1*kRatScaleFactor;
@@ -132,7 +130,6 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
         final BoatConstants constants2 = new BoatConstantsImpl(kLon, kLatOverKLon2, 10);
 
         final double v0 = 10; // 36 km/h
-        final double time = 60; // 1 min (enough to slow down)
         final double omg = Math.PI/time;
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
