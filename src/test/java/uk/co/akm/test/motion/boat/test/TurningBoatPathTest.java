@@ -91,7 +91,7 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
 
     protected final void produceMultipleAnglesPathsWithOmegaVariationTest() {
         final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
-        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 600, false, 32, factory, 2.05, imageFileAnglesPathMultipleOmg);
+        multiplePathsTestWithOmegaVariation("Multiple angles paths with omega variation", 600, 600, false, 2, factory, 2.05, imageFileAnglesPathMultipleOmg);
     }
 
     private void multiplePathsTestWithOmegaVariation(String name, int width, int height, boolean oneScale, int omgScaleFactor, BoatPathFactory factory, double time, String imageFileName) {
