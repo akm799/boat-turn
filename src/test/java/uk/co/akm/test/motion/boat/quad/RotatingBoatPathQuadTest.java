@@ -29,7 +29,17 @@ public final class RotatingBoatPathQuadTest extends RotatingBoatPathTest {
     }
 
     @Test
-    public void shouldRotate() {
-        rotationTest(1, 5,0.3, 600, 600);
+    public void shouldProduceOmegaPath() {
+        rotationOmegaTest(1, 5,0.3, 600, 600);
+    }
+
+    @Test
+    public void shouldProduceVLonPath() {
+        rotationVLonTest(1, 5,10, 600, 600);
+    }
+
+    @Test
+    public void shouldProduceVLatPath() {
+        rotationVLatTest(1, 5,10, 600, 600);
     }
 }

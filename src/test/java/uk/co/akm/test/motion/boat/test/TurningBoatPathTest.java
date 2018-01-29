@@ -245,8 +245,4 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
 
         return pixels;
     }
-
-    interface BoatPathFactory {
-        BoatPath instance(int nPoints);
-    }
 }
