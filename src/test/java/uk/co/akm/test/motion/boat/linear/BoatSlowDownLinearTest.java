@@ -18,8 +18,8 @@ public final class BoatSlowDownLinearTest extends BoatSlowDownTest {
     }
 
     @Override
-    protected UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0) {
-        return new TurningBoat(constants, 0, 0, vx0, 0, 0, 0);
+    protected UpdatableState boatInstance(BoatConstants constants, double v0) {
+        return new TurningBoat(constants, 0, 0, v0, 0, 0, 0);
     }
 
     @Test

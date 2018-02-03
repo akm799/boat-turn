@@ -14,14 +14,14 @@ public abstract class BoatSlowDownTest {
 
     protected abstract double computeDistanceLimit(double k, double v0);
 
-    protected abstract UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double vx0, double vy0, double x0, double y0);
+    protected abstract UpdatableState boatInstance(BoatConstants constants, double v);
 
     protected final void slowDownTest(BoatConstants constants, double v0, double time, double distanceLimitCloseness) {
         final double k = (v0 >= 0 ? constants.kLon() : constants.kLonReverse());
         final double distanceLimit = computeDistanceLimit(k, v0);
 
         // Non-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest = boatInstance(constants, 0, 0, v0, 0, 0, 0);
+        final UpdatableState underTest = boatInstance(constants, v0);
 
         // Boat slows down.
         Updater.update(underTest, time, nSteps);
