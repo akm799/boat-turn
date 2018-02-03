@@ -2,6 +2,7 @@ package uk.co.akm.test.motion.boat.quad;
 
 import org.junit.Test;
 import uk.co.akm.test.motion.boat.model.BoatConstants;
+import uk.co.akm.test.motion.boat.model.Rotation;
 import uk.co.akm.test.motion.boat.model.RudderData;
 import uk.co.akm.test.motion.boat.model.impl.BoatConstantsImpl;
 import uk.co.akm.test.motion.boat.phys.UpdatableState;
@@ -24,18 +25,23 @@ public final class RotatingBoatPathQuadTest extends RotatingBoatPathTest {
     }
 
     @Override
-    protected UpdatableState boatInstance(BoatConstants constants, double omgHdn0, double hdn0, double v0) {
-        return new RotatingBoat(constants, omgHdn0, hdn0, v0);
+    protected UpdatableState boatInstance(BoatConstants constants, Rotation rotation, double omgHdn0, double hdn0, double v0) {
+        return new RotatingBoat(constants, rotation, omgHdn0, hdn0, v0);
     }
 
     @Test
     public void shouldProduceOmegaPath() {
-        rotationOmegaTest(1, 5,0.3, 600, 600);
+        rotationOmegaTest(1,  5,0.3, 600, 600);
+    }
+
+    @Test
+    public void shouldProduceOmegaNegativePath() {
+        rotationOmegaNegativeTest(1,  5,0.3, 600, 600);
     }
 
     @Test
     public void shouldProduceVLonPath() {
-        rotationVLonTest(1, 5,10, 600, 600);
+        rotationVLonTest(1,  5,10, 600, 600);
     }
 
     @Test

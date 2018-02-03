@@ -1,6 +1,7 @@
 package uk.co.akm.test.motion.boat.quad;
 
 import uk.co.akm.test.motion.boat.model.BoatConstants;
+import uk.co.akm.test.motion.boat.model.Rotation;
 import uk.co.akm.test.motion.boat.model.RudderData;
 import uk.co.akm.test.motion.boat.phys.Body;
 import uk.co.akm.test.motion.boat.phys.State;
@@ -31,11 +32,11 @@ public final class RotatingBoat extends Body {
     private double omg;
     private double omgSqSigned;
 
-    public RotatingBoat(BoatConstants constants, double omgHdn0, double hdn0, double v0) {
+    public RotatingBoat(BoatConstants constants, Rotation rotation, double omgHdn0, double hdn0, double v0) {
         super(omgHdn0, 0, 0, hdn0, 0, 0, v0, 0, 0, 0, 0, 0);
 
         kLat = constants.kLat();
-        kRud = constants.kRud();
+        kRud = rotation.sign*Math.abs(constants.kRud());
         rudderData = constants.getRudderData();
 
         final double l4 = 4*rudderData.length;
