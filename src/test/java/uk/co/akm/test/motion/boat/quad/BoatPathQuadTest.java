@@ -15,16 +15,21 @@ import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatPositionPath;
 import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatSpeedPath;
 import uk.co.akm.test.motion.boat.phys.UpdatableState;
 import uk.co.akm.test.motion.boat.phys.Updater;
-import uk.co.akm.test.motion.boat.test.BaseBoatPathTest;
 import uk.co.akm.test.motion.boat.test.BoatPathFactory;
+import uk.co.akm.test.motion.boat.test.BaseComparativeBoatPathTest;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by Thanos Mavroidis on 08/02/2018.
  */
-public class BoatPathQuadTest extends BaseBoatPathTest {
+public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     private final String imageFileSpeedPath = "boat-speed-path.png";
     private final String imageFileAnglesPath = "boat-angles-path.png";
     private final String imageFilePositionPath = "boat-position-path.png";
+    private final String imageFileAnglesPathMultipleRud = "boat-angles-path-rud-comparison.png";
+    private final String imageFilePositionPathMultipleRud = "boat-position-path-rud-comparison.png";
 
     private final double kLon = 1;
     private final RudderData rudderData = new RudderData(4, 1.5, 3*Math.PI/8, 2.5, 1);
@@ -89,5 +94,39 @@ public class BoatPathQuadTest extends BaseBoatPathTest {
         final PixelSet pixels = new PixelSetImpl(width, height, oneScale, path);
 
         writeToImageFile(name, path.toString(), pixels, imageFileName);
+    }
+
+    @Test
+    public void shouldProduceAnglesPathsWhileTurningSlowlyForRudderForceComparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        rudderComparisonPathTests(factory, "Multiple angles paths with rudder force variation", false, 0.3, imageFileAnglesPathMultipleRud);
+    }
+
+    @Test
+    public void shouldProducePositionPathsWhileTurningSlowlyForRudderForceComparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        rudderComparisonPathTests(factory, "Multiple position paths with rudder force variation", true, 60, imageFilePositionPathMultipleRud);
+    }
+
+    private void rudderComparisonPathTests(BoatPathFactory factory, String name, boolean oneScale, double time, String imageFileName) {
+        final double omg1 = 2.5*Math.PI/8;
+        final double omg2 = Math.PI/2;
+        final double omg3 = Math.PI;
+
+        final Collection<UpdatableState> testables = new ArrayList<>(3);
+        testables.add(boatInstanceForRudderForceComparison(omg1));
+        testables.add(boatInstanceForRudderForceComparison(omg2));
+        testables.add(boatInstanceForRudderForceComparison(omg3));
+
+        multiplePathsTest(name, 600, 600, oneScale, testables, time, factory, imageFileName);
+    }
+
+    private UpdatableState boatInstanceForRudderForceComparison(double omega) {
+        final double v0 = 10; // 36 km/h
+        final RudderData rudderData = new RudderData(4, 1.5, omega, 2.5, 1);
+        final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10, rudderData);
+
+        // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
+        return new Boat(constants, Rotation.LEFT, 0, v0, 0, 0, 0);
     }
 }
