@@ -7,18 +7,20 @@ import uk.co.akm.test.motion.boat.model.impl.BoatConstantsImpl;
 import uk.co.akm.test.motion.boat.path.helper.image.PixelSet;
 import uk.co.akm.test.motion.boat.path.helper.image.impl.PixelSetImpl;
 import uk.co.akm.test.motion.boat.path.helper.path.BoatPath;
-import uk.co.akm.test.motion.boat.path.helper.path.Limits;
 import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatAnglesPath;
 import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatPathUpdater;
 import uk.co.akm.test.motion.boat.path.helper.path.impl.BoatPositionPath;
 import uk.co.akm.test.motion.boat.phys.UpdatableState;
 import uk.co.akm.test.motion.boat.phys.Updater;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 
 /**
  * Created by Thanos Mavroidis on 20/01/2018.
  */
-public abstract class TurningBoatPathTest extends BaseBoatPathTest {
+public abstract class TurningBoatPathTest extends BaseComparativeBoatPathTest {
     private final String imageFileAnglesPath = "boat-angles-path.png";
     private final String imageFilePositionPath = "boat-position-path.png";
     private final String imageFileAnglesPathMultipleOmg = "boat-angles-path-omg-comparison.png";
@@ -100,15 +102,13 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
 
         final double v0 = 10; // 36 km/h
 
-        // Left-slow-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg1 = MathConstants.PI_OVER_TWO/time;
-        final UpdatableState underTest1 = boatInstance(constants, omg1, 0, v0, 0, 0, 0);
-
-        // Left-faster-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final double omg2 = omgScaleFactor*omg1;
-        final UpdatableState underTest2 = boatInstance(constants, omg2, 0, v0, 0, 0, 0);
+        final Collection<UpdatableState> testables = new ArrayList<>(2);
+        testables.add(boatInstance(constants, omg1, 0, v0, 0, 0, 0));
+        testables.add(boatInstance(constants, omg2, 0, v0, 0, 0, 0));
 
-        multiplePathsTest(name, width, height, oneScale, underTest1, underTest2, time, factory, imageFileName);
+        multiplePathsTest(name, width, height, oneScale, testables, time, factory, imageFileName);
     }
 
     protected final void produceMultiplePositionPathsWithKRatioVariationTest() {
@@ -132,117 +132,10 @@ public abstract class TurningBoatPathTest extends BaseBoatPathTest {
         final double v0 = 10; // 36 km/h
         final double omg = Math.PI/time;
 
-        // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest1 = boatInstance(constants1, omg, 0, v0, 0, 0, 0);
+        final Collection<UpdatableState> testables = new ArrayList<>(2);
+        testables.add(boatInstance(constants1, omg, 0, v0, 0, 0, 0));
+        testables.add(boatInstance(constants2, omg, 0, v0, 0, 0, 0));
 
-        // Left-turning boat, with higher lateral to longitudinal resistance ratio, setting of from the origin with an initial speed v0 along the x-axis direction.
-        final UpdatableState underTest2 = boatInstance(constants2, omg, 0, v0, 0, 0, 0);
-
-        multiplePathsTest(name, width, height, oneScale, underTest1, underTest2, time, factory, imageFileName);
-    }
-
-    private void multiplePathsTest(String name, int width, int height, boolean oneScale, UpdatableState underTest1, UpdatableState underTest2, double time, BoatPathFactory factory, String imageFileName) {
-        final int nPathPoints = 10000;
-
-        final BoatPath path1 = update(factory.instance(nPathPoints), time, underTest1);
-        final BoatPath path2 = update(factory.instance(nPathPoints), time, underTest2);
-
-        final BoatPath[] paths = setCommonPathLimits(path1, path2);
-        final PixelSet[] pixels = toPixelSets(width, height, oneScale, paths);
-        final byte[] values = {(byte)127, (byte)255};
-
-        writeToImageFile(name, paths[0].toString(), pixels, values, imageFileName);
-    }
-
-    private BoatPath update(BoatPath input, double time, UpdatableState underTest) {
-        Assert.assertTrue(input.capacity() > 0);
-        Assert.assertEquals(0, input.numberOfPoints());
-
-        final BoatPathUpdater pathUpdater = new BoatPathUpdater(input, nSteps);
-        pathUpdater.update(time, underTest);
-
-        final BoatPath updated = pathUpdater.getPath();
-        Assert.assertNotNull(updated);
-        Assert.assertEquals(input, updated);
-        Assert.assertEquals(input.capacity(), updated.numberOfPoints());
-
-        return updated;
-    }
-
-    private BoatPath[] setCommonPathLimits(BoatPath... paths) {
-        final Limits limits = selectLargestLimits(paths);
-        for (BoatPath path : paths) {
-            path.resetLimits(limits);
-        }
-
-        return paths;
-    }
-
-    private Limits selectLargestLimits(BoatPath[] paths) {
-        double xMin = paths[0].xMin();
-        double xMax = paths[0].xMax();
-        double yMin = paths[0].yMin();
-        double yMax = paths[0].yMax();
-
-        if (paths.length > 1) {
-            for (int i=1 ; i<paths.length ; i++) {
-                if (paths[i].xMin() < xMin) {
-                    xMin = paths[i].xMin();
-                }
-
-                if (paths[i].xMax() > xMax) {
-                    xMax = paths[i].xMax();
-                }
-
-                if (paths[i].yMin() < yMin) {
-                    yMin = paths[i].yMin();
-                }
-
-                if (paths[i].yMax() > yMax) {
-                    yMax = paths[i].yMax();
-                }
-            }
-        }
-
-        final double xMinMin = xMin;
-        final double xMaxMax = xMax;
-        final double yMinMin = yMin;
-        final double yMaxMax = yMax;
-
-        return new Limits() {
-            @Override
-            public double xMin() {
-                return xMinMin;
-            }
-
-            @Override
-            public double xMax() {
-                return xMaxMax;
-            }
-
-            @Override
-            public double yMin() {
-                return yMinMin;
-            }
-
-            @Override
-            public double yMax() {
-                return yMaxMax;
-            }
-
-            @Override
-            public void resetLimits(Limits other) {
-                throw new UnsupportedOperationException();
-            }
-        };
-    }
-
-    private PixelSet[] toPixelSets(int width, int height, boolean oneScale, BoatPath[] paths) {
-        final PixelSet[] pixels = new PixelSet[paths.length];
-        for (int i=0 ; i<paths.length; i++) {
-            pixels[i] = new PixelSetImpl(width, height, oneScale, paths[i]);
-        }
-
-        return pixels;
+        multiplePathsTest(name, width, height, oneScale, testables, time, factory, imageFileName);
     }
 }
