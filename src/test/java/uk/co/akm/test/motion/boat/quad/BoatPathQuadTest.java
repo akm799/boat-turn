@@ -30,6 +30,10 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     private final String imageFilePositionPath = "boat-position-path.png";
     private final String imageFileAnglesPathMultipleRud = "boat-angles-path-rud-comparison.png";
     private final String imageFilePositionPathMultipleRud = "boat-position-path-rud-comparison.png";
+    private final String imageFileAnglesPathMultipleKRatio = "boat-angles-path-k-ratio-comparison.png";
+    private final String imageFilePositionPathMultipleKRatio = "boat-position-path-k-ratio-comparison.png";
+    private final String imageFileAnglesPathMultipleV0 = "boat-angles-path-v0-comparison.png";
+    private final String imageFilePositionPathMultipleV0 = "boat-position-path-v0-comparison.png";
 
     private final double kLon = 1;
     private final RudderData rudderData = new RudderData(4, 1.5, 3*Math.PI/8, 2.5, 1);
@@ -126,6 +130,75 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
         final RudderData rudderData = new RudderData(4, 1.5, omega, 2.5, 1);
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10, rudderData);
 
+        // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
+        return new Boat(constants, Rotation.LEFT, 0, v0, 0, 0, 0);
+    }
+
+    @Test
+    public void shouldProduceAnglesPathsWhileTurningSlowlyForKRatioComparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        kRatioComparisonPathTests(factory, "Multiple position paths with k-ratio variation", false, 2, imageFileAnglesPathMultipleKRatio);
+    }
+
+    @Test
+    public void shouldProducePositionPathsWhileTurningSlowlyForKRatioComparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        kRatioComparisonPathTests(factory, "Multiple position paths with k-ratio variation", true, 60, imageFilePositionPathMultipleKRatio);
+    }
+
+    private void kRatioComparisonPathTests(BoatPathFactory factory, String name, boolean oneScale, double time, String imageFileName) {
+        final double kLatOverKLon1 = 2;
+        final double kLatOverKLon2 = 10;
+        final double kLatOverKLon3 = 50;
+        final double kLatOverKLon4 = 150;
+
+        final Collection<UpdatableState> testables = new ArrayList<>(4);
+        testables.add(boatInstanceForKRatioComparison(kLatOverKLon1));
+        testables.add(boatInstanceForKRatioComparison(kLatOverKLon2));
+        testables.add(boatInstanceForKRatioComparison(kLatOverKLon3));
+        testables.add(boatInstanceForKRatioComparison(kLatOverKLon4));
+
+        multiplePathsTest(name, 600, 600, oneScale, testables, time, factory, imageFileName);
+    }
+
+    private UpdatableState boatInstanceForKRatioComparison(double kLatOverKLon) {
+        final double v0 = 10; // 36 km/h
+        final BoatConstants constants = new BoatConstantsImpl(kLon, kLatOverKLon, 10, rudderData);
+
+        // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
+        return new Boat(constants, Rotation.LEFT, 0, v0, 0, 0, 0);
+    }
+
+    @Test
+    public void shouldProduceAnglesPathsWhileTurningSlowlyForV0Comparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        v0ComparisonPathTests(factory, "Multiple position paths with v0 variation", false, 0.4, imageFileAnglesPathMultipleV0);
+    }
+
+    @Test
+    public void shouldProducePositionPathsWhileTurningSlowlyForV0Comparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        v0ComparisonPathTests(factory, "Multiple position paths with v0 variation", true, 60, imageFilePositionPathMultipleV0);
+    }
+
+    private void v0ComparisonPathTests(BoatPathFactory factory, String name, boolean oneScale, double time, String imageFileName) {
+        final double v01 = 0.999;
+        final double v02 = 5;
+        final double v03 = 10;
+        final double v04 = 15;
+        final double v05 = 20;
+
+        final Collection<UpdatableState> testables = new ArrayList<>(5);
+        testables.add(boatInstanceForInitialSpeedComparison(v01));
+        testables.add(boatInstanceForInitialSpeedComparison(v02));
+        testables.add(boatInstanceForInitialSpeedComparison(v03));
+        testables.add(boatInstanceForInitialSpeedComparison(v04));
+        testables.add(boatInstanceForInitialSpeedComparison(v05));
+
+        multiplePathsTest(name, 600, 600, oneScale, testables, time, factory, imageFileName);
+    }
+
+    private UpdatableState boatInstanceForInitialSpeedComparison(double v0) {
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         return new Boat(constants, Rotation.LEFT, 0, v0, 0, 0, 0);
     }
