@@ -28,8 +28,10 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     private final String imageFileSpeedPath = "boat-speed-path.png";
     private final String imageFileAnglesPath = "boat-angles-path.png";
     private final String imageFilePositionPath = "boat-position-path.png";
-    private final String imageFileAnglesPathMultipleRud = "boat-angles-path-rud-comparison.png";
-    private final String imageFilePositionPathMultipleRud = "boat-position-path-rud-comparison.png";
+    private final String imageFileAnglesPathMultipleRudderForce = "boat-angles-path-rudder-force-comparison.png";
+    private final String imageFilePositionPathMultipleRudderForce = "boat-position-path-rudder-force-comparison.png";
+    private final String imageFileAnglesPathMultipleRudderDeflection = "boat-angles-path-rudder-deflection-comparison.png";
+    private final String imageFilePositionPathMultipleRudderDeflection = "boat-position-path-rudder-deflection-comparison.png";
     private final String imageFileAnglesPathMultipleKRatio = "boat-angles-path-k-ratio-comparison.png";
     private final String imageFilePositionPathMultipleKRatio = "boat-position-path-k-ratio-comparison.png";
     private final String imageFileAnglesPathMultipleV0 = "boat-angles-path-v0-comparison.png";
@@ -39,15 +41,15 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     private final RudderData rudderData = new RudderData(4, 1.5, 3*Math.PI/8, 2.5, 1);
     private final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10, rudderData);
 
+    private final double v0 = 10; // 36 km/h
+
     protected String imageSubFolder() {
         return "quad/move";
     }
 
     @Test
     public final void shouldComeToRestWhileTurning() {
-        final double v0 = 10; // 36 km/h
         final double time = 120; // 2 mins (enough to slow down)
-
         final double velocityLimitCloseness = 1.0E-50;
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
@@ -83,8 +85,6 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
         final int nPathPoints = 10000;
         final BoatPathUpdater pathUpdater = new BoatPathUpdater(factory.instance(nPathPoints), nSteps);
 
-        final double v0 = 10; // 36 km/h
-
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         final UpdatableState underTest = new Boat(constants, Rotation.LEFT, 0, v0, 0, 0, 0);
 
@@ -103,16 +103,16 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     @Test
     public void shouldProduceAnglesPathsWhileTurningSlowlyForRudderForceComparison() {
         final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
-        rudderComparisonPathTests(factory, "Multiple angles paths with rudder force variation", false, 0.3, imageFileAnglesPathMultipleRud);
+        rudderForceComparisonPathTests(factory, "Multiple angles paths with rudder force variation", false, 0.3, imageFileAnglesPathMultipleRudderForce);
     }
 
     @Test
     public void shouldProducePositionPathsWhileTurningSlowlyForRudderForceComparison() {
         final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
-        rudderComparisonPathTests(factory, "Multiple position paths with rudder force variation", true, 60, imageFilePositionPathMultipleRud);
+        rudderForceComparisonPathTests(factory, "Multiple position paths with rudder force variation", true, 60, imageFilePositionPathMultipleRudderForce);
     }
 
-    private void rudderComparisonPathTests(BoatPathFactory factory, String name, boolean oneScale, double time, String imageFileName) {
+    private void rudderForceComparisonPathTests(BoatPathFactory factory, String name, boolean oneScale, double time, String imageFileName) {
         final double omg1 = 2.5*Math.PI/8;
         final double omg2 = Math.PI/2;
         final double omg3 = Math.PI;
@@ -126,12 +126,52 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     }
 
     private UpdatableState boatInstanceForRudderForceComparison(double omega) {
-        final double v0 = 10; // 36 km/h
         final RudderData rudderData = new RudderData(4, 1.5, omega, 2.5, 1);
         final BoatConstants constants = new BoatConstantsImpl(kLon, 50, 10, rudderData);
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.
         return new Boat(constants, Rotation.LEFT, 0, v0, 0, 0, 0);
+    }
+
+    @Test
+    public void shouldProduceAnglesPathsWhileTurningSlowlyForRudderDefelctionComparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatAnglesPath(nPoints);
+        rudderDeflectionComparisonPathTests(factory, "Multiple angles paths with rudder deflection variation", false, 0.3, imageFileAnglesPathMultipleRudderDeflection);
+    }
+
+    @Test
+    public void shouldProducePositionPathsWhileTurningSlowlyForRudderDeflectionComparison() {
+        final BoatPathFactory factory = (int nPoints) -> new BoatPositionPath(nPoints);
+        rudderDeflectionComparisonPathTests(factory, "Multiple position paths with rudder deflection variation", true, 60, imageFilePositionPathMultipleRudderDeflection);
+    }
+
+    private void rudderDeflectionComparisonPathTests(BoatPathFactory factory, String name, boolean oneScale, double time, String imageFileName) {
+        final double deflection1 = -1.0;
+        final double deflection2 = -0.75;
+        final double deflection3 = -0.5;
+        final double deflection4 = -0.25;
+        final double deflection5 =  0;
+        final double deflection6 =  0.25;
+        final double deflection7 =  0.5;
+        final double deflection8 =  0.75;
+        final double deflection9 =  1.0;
+
+        final Collection<UpdatableState> testables = new ArrayList<>(9);
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection1));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection2));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection3));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection4));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection5));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection6));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection7));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection8));
+        testables.add(boatInstanceForRudderDeflectionComparison(deflection9));
+
+        multiplePathsTest(name, 600, 600, oneScale, testables, time, factory, imageFileName);
+    }
+
+    private UpdatableState boatInstanceForRudderDeflectionComparison(double deflection) {
+        return new Boat(constants, deflection, 0, v0, 0, 0, 0);
     }
 
     @Test
@@ -162,7 +202,6 @@ public class BoatPathQuadTest extends BaseComparativeBoatPathTest {
     }
 
     private UpdatableState boatInstanceForKRatioComparison(double kLatOverKLon) {
-        final double v0 = 10; // 36 km/h
         final BoatConstants constants = new BoatConstantsImpl(kLon, kLatOverKLon, 10, rudderData);
 
         // Left-turning boat setting of from the origin with an initial speed v0 along the x-axis direction.

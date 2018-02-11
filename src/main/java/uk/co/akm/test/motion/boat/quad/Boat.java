@@ -39,13 +39,19 @@ public final class Boat extends Body {
     private double omgSqSigned;
 
     public Boat(BoatConstants constants, Rotation rotation, double hdn0, double vx0, double vy0, double x0, double y0) {
+        this(constants, rotation.sign, hdn0, vx0, vy0, x0, y0);
+    }
+
+    public Boat(BoatConstants constants, double rudderDeflection, double hdn0, double vx0, double vy0, double x0, double y0) {
         super(0, 0, 0, hdn0, 0, 0, vx0, vy0, 0, x0, y0, 0);
+
+        checkRudderDeflection(rudderDeflection);
 
         kLon = constants.kLon();
         kLat = constants.kLat();
         kLonReverse = constants.kLonReverse();
 
-        kRud = rotation.sign*Math.abs(constants.kRud());
+        kRud = rudderDeflection*Math.abs(constants.kRud());
         rudderData = constants.getRudderData();
 
         final double l4 = 4*rudderData.length;
@@ -67,6 +73,12 @@ public final class Boat extends Body {
 
         omegaTransitionBack = 2*V_TRANSITION/x;
         omegaTransitionFront = 2*V_TRANSITION/lx;
+    }
+
+    private void checkRudderDeflection(double rudderDeflection) {
+        if (rudderDeflection < -1 || rudderDeflection > 1) {
+            throw new IllegalArgumentException("Illegal rudderDeflection argument value: " + rudderDeflection + ". It is not in the valid range (-1, 1).");
+        }
     }
 
     @Override
