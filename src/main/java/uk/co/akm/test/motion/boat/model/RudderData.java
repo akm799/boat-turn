@@ -46,16 +46,16 @@ public final class RudderData {
 
     private void checkArgs(double length, double cogDistanceFromStern, double omega, double v, double vTransition) {
         if (cogDistanceFromStern >= length) {
-            throw new IllegalArgumentException("Distance of the centre of gravity from the stern (" + cogDistanceFromStern + ") is less than the total boat length (" + length + ").");
+            throw new IllegalArgumentException("Distance of the centre of gravity from the stern (" + cogDistanceFromStern + ") is more than the total boat length (" + length + ").");
         }
 
         if (v < vTransition) {
-            throw new IllegalArgumentException("Input boat speed (" + v + ") to low. It is less than the transition speed (" + vTransition + ").");
+            throw new IllegalArgumentException("Input boat turning speed (" + v + ") is too low. It is less than the transition speed (" + vTransition + ").");
         }
 
         final double omegaMin = Math.min(2*vTransition/cogDistanceFromStern, 2*vTransition/(length - cogDistanceFromStern));
         if (omega < omegaMin) {
-            throw new IllegalArgumentException("Input boat angular velocity (" + omega + ") is less that the minimum value (" + omegaMin + ").");
+            throw new IllegalArgumentException("Input boat turning angular velocity (" + omega + ") is less that the minimum value (" + omegaMin + ").");
         }
     }
 }
